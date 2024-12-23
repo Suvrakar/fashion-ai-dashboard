@@ -1,5 +1,6 @@
 import { Card, Image, Text, Button, Divider } from "@mantine/core";
 import { useState } from "react";
+import { AiOutlineEye, AiOutlineDownload, AiOutlineDelete } from "react-icons/ai"; // Importing icons
 
 const FavoritesPage = ({ favorites: initialFavorites }) => {
   const [favorites, setFavorites] = useState(initialFavorites);
@@ -22,12 +23,11 @@ const FavoritesPage = ({ favorites: initialFavorites }) => {
       console.error("Error deleting favorite:", error);
     }
   };
-  
 
   // Handler to clear all favorites
   const handleClearAll = async () => {
     try {
-      const userId = '648d6abc1234567890abcdef'; 
+      const userId = "648d6abc1234567890abcdef";
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_API}/fashion/user-favs/${userId}`,
         { method: "DELETE" }
@@ -42,7 +42,6 @@ const FavoritesPage = ({ favorites: initialFavorites }) => {
       console.error("Error clearing all favorites:", error);
     }
   };
-  
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -64,7 +63,6 @@ const FavoritesPage = ({ favorites: initialFavorites }) => {
               <Card.Section>
                 <Image
                   src={fav.img_url}
-                  // src={`https://via.placeholder.com/300?text=${fav.item_code}`}
                   alt={fav.item_code}
                   height={200}
                 />
@@ -78,25 +76,43 @@ const FavoritesPage = ({ favorites: initialFavorites }) => {
                 </Text>
               </div>
               <div className="flex space-x-2 mt-4">
+                {/* View Icon */}
                 <Button
                   variant="light"
                   color="blue"
                   fullWidth
                   radius="md"
-                  className="mt-auto"
+                  className="mt-auto flex items-center justify-center"
                 >
-                  View Details
+                  <AiOutlineEye size={20} />
                 </Button>
+                {/* Delete Icon */}
                 <Button
                   variant="light"
                   color="red"
                   fullWidth
                   radius="md"
-                  className="mt-auto"
+                  className="mt-auto flex items-center justify-center"
                   onClick={() => handleDeleteFavorite(fav.item_code)}
                 >
-                  Delete
+                  <AiOutlineDelete size={20} />
                 </Button>
+                {/* Download Icon */}
+                <a
+                  href={fav.img_url}
+                  download={`Favorite-${fav.item_code}.jpg`}
+                  style={{ textDecoration: "none", width: "100%" }}
+                >
+                  <Button
+                    variant="light"
+                    color="green"
+                    fullWidth
+                    radius="md"
+                    className="mt-auto flex items-center justify-center"
+                  >
+                    <AiOutlineDownload size={20} />
+                  </Button>
+                </a>
               </div>
             </Card>
           ))}
