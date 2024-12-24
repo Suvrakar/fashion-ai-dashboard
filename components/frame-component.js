@@ -41,6 +41,7 @@ const FrameComponent = ({ className = "" }) => {
       ? "text-darkorange font-semibold"
       : "text-gray-100";
   };
+  console.log("Session data:", session);
 
   return (
     <header
@@ -149,9 +150,7 @@ const FrameComponent = ({ className = "" }) => {
               {/* User Avatar */}
               <Image
                 src={
-                  session
-                    ? session.user?.image
-                    : "https://avatar.iran.liara.run/public"
+                  session.user?.image || "https://avatar.iran.liara.run/public"
                 }
                 alt="User Avatar"
                 width={40}

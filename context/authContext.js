@@ -17,6 +17,14 @@ export const AuthProvider = ({ children }) => {
 
   console.log("session, status in authprovider 1", session, status);
 
+  useEffect(() => {
+    if (status === "authenticated" && session?.user?.id) {
+      localStorage.setItem("user_id", session.user.id);
+    } else if (status === "unauthenticated") {
+      localStorage.removeItem("user_id");
+    }
+  }, [session, status]);
+
   const login = async (email, password) => {
     setLoading(true);
     try {
@@ -24,7 +32,11 @@ export const AuthProvider = ({ children }) => {
         "https://backend-1s2t.onrender.com/auth/login",
         { email, password }
       );
+      console.log("response", response);
       if (response.status === 200) {
+        const { user_id } = response.data;
+        localStorage.setItem("user_id", user_id);
+
         await signIn("credentials", {
           email,
           password,
@@ -74,8 +86,16 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const handleGoogleSignIn = () => {
-    signIn("google", { callbackUrl: "/" });
+  const handleGoogleSignIn = async () => {
+    try {
+      await signIn("google", { callbackUrl: "/" });
+      if (status === "authenticated") {
+        const user_id = session.user.id;
+        localStorage.setItem("user_id", user_id);
+      }
+    } catch (err) {
+      console.error("Google login failed", err);
+    }
   };
 
   const logout = () => {

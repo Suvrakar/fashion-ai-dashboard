@@ -1,18 +1,23 @@
 import { Card, Image, Text, Button, Divider } from "@mantine/core";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   AiOutlineEye,
   AiOutlineDownload,
   AiOutlineDelete,
-} from "react-icons/ai"; // Importing icons
+} from "react-icons/ai";
 
 const FavoritesPage = ({ favorites: initialFavorites }) => {
   const [favorites, setFavorites] = useState(initialFavorites);
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => {
+    const storedUserId = localStorage.getItem("user_id");
+    setUserId(storedUserId);
+  }, []);
 
   // Handler to delete an individual favorite
   const handleDeleteFavorite = async (itemCode) => {
     try {
-      const userId = "648d6abc1234567890abcdef";
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_API}/fashion/user-favs/${userId}/${itemCode}`,
         { method: "DELETE" }
@@ -31,7 +36,6 @@ const FavoritesPage = ({ favorites: initialFavorites }) => {
   // Handler to clear all favorites
   const handleClearAll = async () => {
     try {
-      const userId = "648d6abc1234567890abcdef";
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_API}/fashion/user-favs/${userId}`,
         { method: "DELETE" }
