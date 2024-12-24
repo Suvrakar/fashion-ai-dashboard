@@ -42,6 +42,7 @@ const FrameComponent = ({ className = "" }) => {
       : "text-gray-100";
   };
 
+  console.log("isAuthenticated", isAuthenticated);
   return (
     <header
       className={`w-full flex flex-col items-center gap-4 pt-4 ${className}`}
@@ -125,20 +126,16 @@ const FrameComponent = ({ className = "" }) => {
               <div className="flex space-x-4">
                 <Button
                   variant="light"
-                  onClick={() => router.push("/love")}
+                  onClick={() => router.push("/favorites")}
                 >
                   <FaHeart className="text-red-600" />
                 </Button>
 
                 {/* History Button */}
-                <Button
-                  variant="light"
-                  onClick={() => router.push("/favorites")}
-                >
+                <Button variant="light" onClick={() => router.push("/history")}>
                   History
                 </Button>
               </div>
-
 
               {/* Logout Button */}
               <Button

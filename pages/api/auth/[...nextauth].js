@@ -29,6 +29,7 @@ export default NextAuth({
             return {
               id: res.data.id,
               email: credentials.email,
+              token: res.data.token,
             };
           }
         } catch (error) {
@@ -52,12 +53,14 @@ export default NextAuth({
       if (account && user) {
         token.id = user.id;
         token.email = user.email;
+        token.token = user.token;
       }
       return token;
     },
     async session({ session, token }) {
       session.user.id = token.id;
       session.user.email = token.email;
+      session.user.token = token.token;
       return session;
     },
     async redirect({ url, baseUrl }) {

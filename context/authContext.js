@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { getSession, signIn, signOut, useSession } from "next-auth/react";
 import axios from "axios";
 import { useRouter } from "next/router";
 
@@ -15,6 +15,8 @@ export const AuthProvider = ({ children }) => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  console.log("session, status in authprovider 1", session, status);
+
   const login = async (email, password) => {
     setLoading(true);
     try {
@@ -23,16 +25,13 @@ export const AuthProvider = ({ children }) => {
         { email, password }
       );
       if (response.status === 200) {
-        // Use NextAuth credentials provider to sign in
-        signIn("credentials", {
+        await signIn("credentials", {
           email,
           password,
           redirect: false,
-        }).then(() => {
-          if (router.pathname !== "/") {
-            router.push("/");
-          }
         });
+
+        router.push("/");
       }
     } catch (err) {
       setError(err.response?.data?.message || "Login failed.");
@@ -41,15 +40,32 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const signup = async (email, password) => {
+  const signup = async (username, email, password) => {
     setLoading(true);
     try {
       const response = await axios.post(
-        "https://backend-1s2t.onrender.com/auth/signup",
-        { email, password }
+        "https://backend-1s2t.onrender.com/auth/register",
+        { displayName: username, email, password }
       );
+      console.log("response", response);
+
       if (response.status === 201) {
-        router.push("/login");
+        const { token, user_id } = response.data;
+        localStorage.setItem("token", token);
+        localStorage.setItem("user_id", user_id);
+
+        await signIn("credentials", {
+          email,
+          password,
+          redirect: false,
+        });
+        console.log(
+          "session, status in authprovider inside singup function",
+          session,
+          status
+        );
+        await getSession();
+        router.push("/");
       }
     } catch (err) {
       setError(err.response?.data?.message || "Signup failed.");

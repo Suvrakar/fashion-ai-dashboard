@@ -3,6 +3,7 @@ import { Suspense, useState } from "react";
 import Filter from "../components/Home/Filter";
 import Clothes from "../components/Home/Clothes";
 import dynamic from "next/dynamic";
+import { useSession } from "next-auth/react";
 
 const ClothesModal = dynamic(() =>
   import("../components/ClothUploadModal", {
@@ -35,6 +36,7 @@ const modalStyle = {
 const ECommerceProductsSelect = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [imageUrl, setImageUrl] = useState("image1@3x.png");
+  const { data: session, status } = useSession();
 
   const [open, setOpen] = useState(false);
 
@@ -58,6 +60,8 @@ const ECommerceProductsSelect = () => {
       setOpen(true);
     }
   };
+
+  console.log("session, status in home pg", session, status);
 
   return (
     <div className="w-full max-w-full bg-white overflow-hidden flex flex-col items-start justify-start text-left text-lg text-white font-inter">

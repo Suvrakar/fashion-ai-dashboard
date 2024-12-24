@@ -8,9 +8,10 @@ import {
   Container,
   LinearProgress,
 } from "@mui/material";
-import { signIn, useSession } from "next-auth/react";
+import { getSession, signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import axios from "axios";
+import { useAuth } from "../context/authContext";
 
 const SignUpPage = () => {
   const [username, setUsername] = useState("");
@@ -20,33 +21,13 @@ const SignUpPage = () => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { data: session, status } = useSession();
+  const { signup } = useAuth();
 
   const handleSignup = async (e) => {
     e.preventDefault(); // Prevent page reload on submit
 
     if (username && email && password) {
-      setError("");
-      setLoading(true);
-
-      try {
-        const response = await axios.post(
-          "https://backend-1s2t.onrender.com/auth/register",
-          {
-            displayName: username,
-            email: email,
-            password: password,
-          }
-        );
-        console.log(response);
-        if (response.status === 201) {
-          router.push("/");
-        }
-        localStorage.setItem("token", response.data.token);
-      } catch (error) {
-        setError("Registration failed. Please try again.");
-      } finally {
-        setLoading(false);
-      }
+      await signup(username, email, password);
     } else {
       setError("Please fill in all fields.");
     }

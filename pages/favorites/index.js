@@ -1,6 +1,10 @@
 import { Card, Image, Text, Button, Divider } from "@mantine/core";
 import { useState } from "react";
-import { AiOutlineEye, AiOutlineDownload, AiOutlineDelete } from "react-icons/ai"; // Importing icons
+import {
+  AiOutlineEye,
+  AiOutlineDownload,
+  AiOutlineDelete,
+} from "react-icons/ai"; // Importing icons
 
 const FavoritesPage = ({ favorites: initialFavorites }) => {
   const [favorites, setFavorites] = useState(initialFavorites);
@@ -8,16 +12,16 @@ const FavoritesPage = ({ favorites: initialFavorites }) => {
   // Handler to delete an individual favorite
   const handleDeleteFavorite = async (itemCode) => {
     try {
-      const userId = "648d6abc1234567890abcdef"; 
+      const userId = "648d6abc1234567890abcdef";
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_API}/fashion/user-favs/${userId}/${itemCode}`,
         { method: "DELETE" }
       );
-  
+
       if (!res.ok) {
         throw new Error("Failed to delete favorite");
       }
-  
+
       setFavorites(favorites.filter((fav) => fav.item_code !== itemCode));
     } catch (error) {
       console.error("Error deleting favorite:", error);
@@ -32,11 +36,11 @@ const FavoritesPage = ({ favorites: initialFavorites }) => {
         `${process.env.NEXT_PUBLIC_BASE_API}/fashion/user-favs/${userId}`,
         { method: "DELETE" }
       );
-  
+
       if (!res.ok) {
         throw new Error("Failed to clear all favorites");
       }
-  
+
       setFavorites([]);
     } catch (error) {
       console.error("Error clearing all favorites:", error);
@@ -46,7 +50,7 @@ const FavoritesPage = ({ favorites: initialFavorites }) => {
   return (
     <div className="max-w-4xl mx-auto">
       <Text size="xl" weight={700} align="center" mb={10}>
-        History
+        Favorites
       </Text>
       <Divider w="full" mb={20} />
       <div className="flex justify-center mb-4">
@@ -61,11 +65,7 @@ const FavoritesPage = ({ favorites: initialFavorites }) => {
           {favorites.map((fav) => (
             <Card key={fav._id} shadow="sm" padding="lg" radius="md" withBorder>
               <Card.Section>
-                <Image
-                  src={fav.img_url}
-                  alt={fav.item_code}
-                  height={200}
-                />
+                <Image src={fav.img_url} alt={fav.item_code} height={200} />
               </Card.Section>
               <div className="flex-1">
                 <Text weight={500} mt="md" size="lg">
