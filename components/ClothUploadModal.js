@@ -109,6 +109,7 @@ const ClothesModal = ({ open, setOpen }) => {
       router.push("/login");
       return;
     }
+    const email = localStorage.getItem("email");
 
     setLoading(true); // Start loading
 
@@ -121,6 +122,7 @@ const ClothesModal = ({ open, setOpen }) => {
     formDataToSubmit.append("season_id", formData.season_id);
     formDataToSubmit.append("price", formData.price);
     formDataToSubmit.append("color_id", formData.color_id);
+    formDataToSubmit.append("email", email);
 
     try {
       const response = await axios.post(

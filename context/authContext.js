@@ -19,9 +19,11 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     if (status === "authenticated" && session?.user?.id) {
-      localStorage.setItem("user_id", session.user.id);
+      localStorage.setItem("user_id", session?.user?.id);
+      localStorage.setItem("email", session?.user?.email);
     } else if (status === "unauthenticated") {
       localStorage.removeItem("user_id");
+      localStorage.removeItem("email");
     }
   }, [session, status]);
 
@@ -36,13 +38,14 @@ export const AuthProvider = ({ children }) => {
       if (response.status === 200) {
         const { user_id } = response.data;
         localStorage.setItem("user_id", user_id);
-
+        localStorage.setItem("email", email); // Save email to localStorage
+  
         await signIn("credentials", {
           email,
           password,
           redirect: false,
         });
-
+  
         router.push("/");
       }
     } catch (err) {
@@ -50,7 +53,7 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  };
+  };  
 
   const signup = async (username, email, password) => {
     setLoading(true);
@@ -60,19 +63,20 @@ export const AuthProvider = ({ children }) => {
         { displayName: username, email, password }
       );
       console.log("response", response);
-
+  
       if (response.status === 201) {
         const { token, user_id } = response.data;
         localStorage.setItem("token", token);
         localStorage.setItem("user_id", user_id);
-
+        localStorage.setItem("email", email); // Save email to localStorage
+  
         await signIn("credentials", {
           email,
           password,
           redirect: false,
         });
         console.log(
-          "session, status in authprovider inside singup function",
+          "session, status in authprovider inside signup function",
           session,
           status
         );
@@ -90,17 +94,26 @@ export const AuthProvider = ({ children }) => {
     try {
       await signIn("google", { callbackUrl: "/" });
       if (status === "authenticated") {
-        const user_id = session.user.id;
-        localStorage.setItem("user_id", user_id);
+        const user_id = session?.user?.id;
+        const email = session?.user?.email; 
+        // localStorage.setItem("user_id", user_id);
+        // localStorage.setItem("email", email); 
+        console.log(email, " email")
       }
     } catch (err) {
       console.error("Google login failed", err);
     }
   };
+  
 
   const logout = () => {
+    localStorage.removeItem("user_id");
+    localStorage.removeItem("email");
+    localStorage.removeItem("token"); 
+    
     signOut({ callbackUrl: "/" });
   };
+  
 
   // useEffect(() => {
   //   if (status === "authenticated" && router.pathname !== "/") {

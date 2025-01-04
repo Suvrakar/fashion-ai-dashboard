@@ -15,18 +15,22 @@ const Clothes = ({ selectedProduct, handleCardClick }) => {
   };
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_BASE_API}/fashion/clothes`
-        );
-        setProducts(response.data);
-      } catch (error) {
-        console.error("Error fetching products", error);
-      }
-    };
+    const storedEmail = localStorage.getItem('email');
 
-    fetchProducts();
+    if(storedEmail!=null){
+      const fetchProducts = async () => {
+        try {
+          const response = await axios.get(
+            `${process.env.NEXT_PUBLIC_BASE_API}/fashion/clothes/email/${storedEmail}`
+          );
+          setProducts(response.data);
+        } catch (error) {
+          console.error("Error fetching products", error);
+        }
+      };
+      fetchProducts();
+    }
+
   }, []);
 
   const mockLastProduct = {

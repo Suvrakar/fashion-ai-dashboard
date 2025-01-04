@@ -22,6 +22,7 @@ const Clothes = ({ selectedProduct, handleCardClick }) => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const [local, setLocal] = useState(null);
   const router = useRouter();
 
   const handleGenerateClick = () => {
@@ -29,19 +30,23 @@ const Clothes = ({ selectedProduct, handleCardClick }) => {
   };
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_BASE_API}/fashion/clothes`
-        );
-        setProducts(response.data);
-      } catch (error) {
-        console.error("Error fetching products", error);
-      }
-    };
+    const email = localStorage.getItem('email');
+    if (email) {
+        setLocal(email);
+        const fetchProducts = async () => {
+            try {
+                const response = await axios.get(
+                    `${process.env.NEXT_PUBLIC_BASE_API}/fashion/clothes/email/${email}`
+                );
+                setProducts(response.data);
+            } catch (error) {
+                console.error("Error fetching products", error);
+            }
+        };
+        fetchProducts();
+    }
+}, []);
 
-    fetchProducts();
-  }, []);
 
   const productsWithLastProduct = [...products, mockLastProduct];
 
