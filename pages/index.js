@@ -1,9 +1,10 @@
 import Image from "next/image";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Filter from "../components/Home/Filter";
 import Clothes from "../components/Home/Clothes";
 import dynamic from "next/dynamic";
 import { useSession } from "next-auth/react";
+import axios from "axios";
 
 const ClothesModal = dynamic(() =>
   import("../components/ClothUploadModal", {
@@ -35,19 +36,31 @@ const modalStyle = {
 
 const ECommerceProductsSelect = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [products, setProducts] = useState([]);
   const [imageUrl, setImageUrl] = useState("image1@3x.png");
   const { data: session, status } = useSession();
 
   const [open, setOpen] = useState(false);
 
-  // const handleCardClick = (id) => {
-  //   console.log(id);
-  //   setSelectedProduct(id);
-  //   const selectedImage = selectedProductImage.find(
-  //     (product) => product.id === id
-  //   );
-  //   setImageUrl(selectedImage ? selectedImage.image : "image1@3x.png");
-  // };
+  const fetchProducts = async () => {
+    if (status === "authenticated") {
+      const email = session?.user?.email || localStorage.getItem("email");
+      if (email) {
+        try {
+          const response = await axios.get(
+            `${process.env.NEXT_PUBLIC_BASE_API}/fashion/clothes/email/${email}`
+          );
+          setProducts(response.data);
+        } catch (error) {
+          console.error("Error fetching products:", error);
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, [status, session]);
 
   const handleCardClick = (id, isLastProduct) => {
     setSelectedProduct(id);
@@ -74,6 +87,7 @@ const ECommerceProductsSelect = () => {
           <Clothes
             selectedProduct={selectedProduct}
             handleCardClick={handleCardClick}
+            products={products}
           />
 
           <div className="flex flex-col items-start justify-start gap-[1.5rem] text-lg text-dimgray">
@@ -143,7 +157,11 @@ const ECommerceProductsSelect = () => {
           </div>
         </div>
         <Suspense fallback={<div>loading...</div>}>
-          <ClothesModal open={open} setOpen={setOpen} />
+          <ClothesModal
+            open={open}
+            setOpen={setOpen}
+            fetchProducts={fetchProducts}
+          />
         </Suspense>
       </section>
     </div>

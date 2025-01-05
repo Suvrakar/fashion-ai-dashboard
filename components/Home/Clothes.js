@@ -5,6 +5,7 @@ import { FaRegHeart } from "react-icons/fa";
 import { IoMdCheckmark } from "react-icons/io";
 import axios from "axios";
 import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
 
 const mockLastProduct = {
   id: 9,
@@ -17,40 +18,24 @@ const mockLastProduct = {
   style_id: "Casual",
 };
 
-const Clothes = ({ selectedProduct, handleCardClick }) => {
-  const [products, setProducts] = useState([]);
+const Clothes = ({ selectedProduct, handleCardClick, products }) => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
-  const [local, setLocal] = useState(null);
   const router = useRouter();
+
+  const { status } = useSession();
+
+  console.log("status inside clothes", status);
 
   const handleGenerateClick = () => {
     router.push("/generated");
   };
 
-  useEffect(() => {
-    const email = localStorage.getItem('email');
-    if (email) {
-        setLocal(email);
-        const fetchProducts = async () => {
-            try {
-                const response = await axios.get(
-                    `${process.env.NEXT_PUBLIC_BASE_API}/fashion/clothes/email/${email}`
-                );
-                setProducts(response.data);
-            } catch (error) {
-                console.error("Error fetching products", error);
-            }
-        };
-        fetchProducts();
-    }
-}, []);
-
-
   const productsWithLastProduct = [...products, mockLastProduct];
 
-  const handleLikeProduct = async (userId, productId, imgUrl) => {
+  const handleLikeProduct = async (productId, imgUrl) => {
+    const userId = localStorage.getItem("user_id");
     try {
       const res = await axios.post(
         `${process.env.NEXT_PUBLIC_BASE_API}/fashion/user-fav`,
@@ -71,7 +56,6 @@ const Clothes = ({ selectedProduct, handleCardClick }) => {
       setSnackbarOpen(true);
     }
   };
-  
 
   const handleSelectProduct = (product) => {
     console.log("selected");
@@ -88,7 +72,6 @@ const Clothes = ({ selectedProduct, handleCardClick }) => {
       setSnackbarOpen(true);
     }
   };
-
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
@@ -113,7 +96,9 @@ const Clothes = ({ selectedProduct, handleCardClick }) => {
             >
               <div
                 onClick={() =>
-                  handleCardClick(product.id || product._id, isLastProduct)
+                  status === "unauthenticated"
+                    ? router.push("/login")
+                    : handleCardClick(product.id || product._id, isLastProduct)
                 }
                 style={{
                   backgroundColor: "white",
@@ -152,7 +137,7 @@ const Clothes = ({ selectedProduct, handleCardClick }) => {
                       borderRadius: "50%",
                     }}
                     onClick={() =>
-                      handleLikeProduct(product.user_id, product.item_code, product.img_url)
+                      handleLikeProduct(product.item_code, product.img_url)
                     }
                   >
                     <FaRegHeart className="text-white p-1" />
@@ -173,7 +158,6 @@ const Clothes = ({ selectedProduct, handleCardClick }) => {
                   >
                     <IoMdCheckmark className="text-orange-500 text-lg font-bold" />
                   </div>
-
 
                   {!isLastProduct && (
                     <div className="absolute bottom-0 right-0 bg-black text-white px-3 py-1 rounded-tl-lg rounded-br-lg text-sm font-bold">

@@ -20,7 +20,6 @@ const LoginPage = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     await login(email, password);
-
   };
 
   return (
@@ -115,5 +114,7 @@ const LoginPage = () => {
     </Container>
   );
 };
+
+LoginPage.layout = false;
 
 export default LoginPage;

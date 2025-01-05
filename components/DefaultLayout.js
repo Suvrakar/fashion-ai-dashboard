@@ -1,7 +1,15 @@
 import { Divider } from "@mantine/core";
 import FrameComponent from "./frame-component";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 
 const DefaultLayout = ({ children }) => {
+  const router = useRouter();
+
+  if (router.pathname === "/login" || router.pathname === "/signup") {
+    return children;
+  }
+
   return (
     <div className="flex flex-col min-h-screen">
       <header>

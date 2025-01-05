@@ -143,4 +143,6 @@ const SignUpPage = () => {
   );
 };
 
+SignUpPage.layout = false;
+
 export default SignUpPage;

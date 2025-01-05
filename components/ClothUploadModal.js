@@ -28,7 +28,7 @@ const modalStyle = {
   outline: "none",
 };
 
-const ClothesModal = ({ open, setOpen }) => {
+const ClothesModal = ({ open, setOpen, fetchProducts }) => {
   const [formData, setFormData] = useState({
     item_code: "",
     category_id: "",
@@ -39,7 +39,6 @@ const ClothesModal = ({ open, setOpen }) => {
     color_id: "",
     img_url: "", // Added to track the image preview URL
   });
-
 
   const [image, setImage] = useState(null);
   const [categories, setCategories] = useState([]);
@@ -70,7 +69,7 @@ const ClothesModal = ({ open, setOpen }) => {
         setStyles(styleResponse.data);
         setSeasons(seasonResponse.data);
         setColors(colorResponse.data);
-        console.log(colorResponse.data, " colorResponse")
+        console.log(colorResponse.data, " colorResponse");
       } catch (error) {
         console.error("Error fetching dropdown options:", error);
       }
@@ -94,7 +93,6 @@ const ClothesModal = ({ open, setOpen }) => {
       }));
     }
   };
-
 
   const handleColorSelect = (colorId) => {
     setFormData((prevState) => ({
@@ -131,16 +129,29 @@ const ClothesModal = ({ open, setOpen }) => {
         { headers: { "Content-Type": "multipart/form-data" } }
       );
       console.log("Clothing item uploaded:", response.data);
-      alert("Product uploaded successfully!");
+      // alert("Product uploaded successfully!");
       setOpen(false);
+
+      setFormData({
+        item_code: "",
+        category_id: "",
+        style_id: "",
+        year: "",
+        season_id: "",
+        price: "",
+        color_id: "",
+        img_url: "",
+      });
+      setImage(null);
+
+      fetchProducts();
     } catch (error) {
       console.error("Error uploading product:", error);
       alert("Failed to upload product.");
     } finally {
-      setLoading(false); // End loading
+      setLoading(false);
     }
   };
-
 
   return (
     <Modal
@@ -169,7 +180,9 @@ const ClothesModal = ({ open, setOpen }) => {
                     ) : (
                       <div className="items-center">
                         <TiUpload className="text-orange-500 w-[40px] h-[40px]" />
-                        <p className="text-[#ff733b] font-bold mt-0">Image Upload</p>
+                        <p className="text-[#ff733b] font-bold mt-0">
+                          Image Upload
+                        </p>
                       </div>
                     )}
                   </div>
@@ -312,10 +325,11 @@ const ClothesModal = ({ open, setOpen }) => {
                     <div
                       key={color._id}
                       onClick={() => handleColorSelect(color._id)}
-                      className={`w-8 h-8 cursor-pointer rounded-full ${formData.color_id === color._id
-                        ? "border-4 border-[#ff733b]"
-                        : ""
-                        }`}
+                      className={`w-8 h-8 cursor-pointer rounded-full ${
+                        formData.color_id === color._id
+                          ? "border-4 border-[#ff733b]"
+                          : ""
+                      }`}
                       style={{
                         backgroundColor: color.hexadecimal_value || "#ccc",
                       }}
@@ -334,7 +348,6 @@ const ClothesModal = ({ open, setOpen }) => {
               >
                 {loading ? "Uploading..." : "Upload Item"}
               </Button>
-
             </div>
           </div>
         </form>
