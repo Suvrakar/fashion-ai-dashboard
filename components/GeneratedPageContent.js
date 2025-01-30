@@ -13,9 +13,20 @@ const GeneratedPageContent = ({
     <div className="flex mx-auto items-center flex-col md:flex-row max-w-full md:items-start justify-evenly lg:gap-5">
       {/* Left Side */}
       <div className="lg:w-[60%] flex justify-center flex-col md:items-start md:px-5">
-        <div className="text-lg text-gray-100 flex gap-4 lg:ml-12 ml-4">
-          <p>{new Date().toISOString().split("T")[0]}</p>
-          <p>Generate # {generationNumber}</p>
+        <div className="flex justify-start items-center w-full mt-4 gap-4">
+          <div className="text-lg text-gray-100 flex gap-4 lg:ml-12 ml-4">
+            <p>{new Date().toISOString().split("T")[0]}</p>
+            <p>Generate # {generationNumber}</p>
+          </div>
+          <Button
+            variant="contained"
+            color="primary"
+            size="small"
+            className="px-2"
+            startIcon={<AiOutlineDownload />}
+          >
+            Download All Images
+          </Button>
         </div>
         <div className="flex justify-center mx-4 items-center w-full">
           <Grid
@@ -55,7 +66,7 @@ const GeneratedPageContent = ({
                           style={{ textDecoration: "none" }}
                         >
                           <Button
-                            variant="contained"
+                            variant="outlined"
                             color="primary"
                             startIcon={<AiOutlineDownload />}
                             size="small"
@@ -128,7 +139,7 @@ const GeneratedPageContent = ({
                       style={{ textDecoration: "none" }}
                     >
                       <Button
-                        variant="contained"
+                        variant="outlined"
                         color="primary"
                         startIcon={<AiOutlineDownload />}
                         size="small"

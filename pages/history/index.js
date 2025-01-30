@@ -12,7 +12,7 @@ const HistoryPage = () => {
   return (
     <div className="-mt-4">
       <p className="text-center text-orange-400 font-bold text-5xl">
-        Your Generation History
+        Generation History
       </p>
       <GeneratedPageFilter />
       {Array.from({ length: 3 }).map((_, index) => (

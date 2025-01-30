@@ -41,7 +41,6 @@ const FrameComponent = ({ className = "" }) => {
       ? "text-darkorange font-semibold"
       : "text-gray-100";
   };
-  console.log("Session data:", session);
 
   return (
     <header

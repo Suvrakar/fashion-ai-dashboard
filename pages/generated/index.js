@@ -10,7 +10,7 @@ import {
   Modal,
 } from "@mui/material";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LuFilter } from "react-icons/lu";
 import GeneratedPageFilter from "../../components/GeneratedPageFilter";
 import GeneratedPageContent from "../../components/GeneratedPageContent";
@@ -131,6 +131,28 @@ const GeneratedPage = () => {
   const handleCardClick = (id) => {
     setSelectedProduct(id);
   };
+
+  useEffect(() => {
+    const fetchGeneratedImage = async () => {
+      const generatedCloth = localStorage.getItem("generatedId");
+      const response = await fetch(
+        `https://api.klingai.com/v1/images/kolors-virtual-try-on/${generatedCloth}`,
+        {
+          method: "GET",
+          // mode: "no-cors",
+          headers: {
+            Authorization:
+              "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhMTAwYTM5YTM4MTk0NDA1YTI2N2I5NThiOWZjOTIzYiIsImV4cCI6MTczODI1ODQyOCwibmJmIjoxNzM4MjU2NjIzfQ.cyUzDUGuwYajtsT1D02ZyS_0LTc1zy3zOZcjimIE3Yk",
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await response.json();
+      console.log(data);
+    };
+
+    fetchGeneratedImage();
+  }, []);
 
   return (
     <div className="w-full max-w-full bg-white overflow-hidden flex flex-col items-start justify-start text-left text-lg text-white font-inter">

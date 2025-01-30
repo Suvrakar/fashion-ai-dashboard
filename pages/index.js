@@ -37,7 +37,9 @@ const modalStyle = {
 const ECommerceProductsSelect = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [products, setProducts] = useState([]);
-  const [imageUrl, setImageUrl] = useState("image1@3x.png");
+  const [imageUrl, setImageUrl] = useState(
+    "https://res.cloudinary.com/dgozusvua/image/upload/v1738241262/fashion-ai/gdvdtpgidfoe9qdpsru9.png"
+  );
   const { data: session, status } = useSession();
 
   const [open, setOpen] = useState(false);
@@ -62,19 +64,18 @@ const ECommerceProductsSelect = () => {
     fetchProducts();
   }, [status, session]);
 
-  const handleCardClick = (id, isLastProduct) => {
-    setSelectedProduct(id);
-    const selectedImage = selectedProductImage.find(
-      (product) => product.id === id
-    );
-    setImageUrl(selectedImage ? selectedImage.image : "image1@3x.png");
+  const handleCardClick = (productId, isLastProduct) => {
+    setSelectedProduct(productId);
+
+    const selected = JSON.parse(localStorage.getItem("selectedProduct"));
+    if (selected) {
+      console.log("Selected product URL:", selected.img_url);
+    }
 
     if (isLastProduct) {
       setOpen(true);
     }
   };
-
-  console.log("session, status in home pg", session, status);
 
   return (
     <div className="w-full max-w-full bg-white overflow-hidden flex flex-col items-start justify-start text-left text-lg text-white font-inter">
@@ -88,10 +89,11 @@ const ECommerceProductsSelect = () => {
             selectedProduct={selectedProduct}
             handleCardClick={handleCardClick}
             products={products}
+            modelImage={imageUrl}
           />
 
           <div className="flex flex-col items-start justify-start gap-[1.5rem] text-lg text-dimgray">
-            {/* <div className="flex w-full flex-col items-start justify-start gap-4 text-lg text-dimgray">
+            <div className="flex w-full flex-col items-start justify-start gap-4 text-lg text-dimgray">
               <div
                 className="relative  mx-auto w-[240px] h-[440px] lg:h-[540px] rounded-xl overflow-hidden bg-cover bg-top object-contain"
                 style={{ backgroundImage: `url(${imageUrl})` }}
@@ -122,7 +124,7 @@ const ECommerceProductsSelect = () => {
                   />
                 </div>
               </div>
-            </div> */}
+            </div>
 
             <div className="flex flex-row  mx-auto items-start justify-start gap-2.5">
               <div className="relative capitalize">tuck</div>

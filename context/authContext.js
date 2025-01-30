@@ -15,8 +15,6 @@ export const AuthProvider = ({ children }) => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  console.log("session, status in authprovider 1", session, status);
-
   useEffect(() => {
     if (status === "authenticated" && session?.user?.id) {
       localStorage.setItem("user_id", session?.user?.id);
@@ -39,13 +37,13 @@ export const AuthProvider = ({ children }) => {
         const { user_id } = response.data;
         localStorage.setItem("user_id", user_id);
         localStorage.setItem("email", email); // Save email to localStorage
-  
+
         await signIn("credentials", {
           email,
           password,
           redirect: false,
         });
-  
+
         router.push("/");
       }
     } catch (err) {
@@ -53,7 +51,7 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  };  
+  };
 
   const signup = async (username, email, password) => {
     setLoading(true);
@@ -63,13 +61,13 @@ export const AuthProvider = ({ children }) => {
         { displayName: username, email, password }
       );
       console.log("response", response);
-  
+
       if (response.status === 201) {
         const { token, user_id } = response.data;
         localStorage.setItem("token", token);
         localStorage.setItem("user_id", user_id);
         localStorage.setItem("email", email); // Save email to localStorage
-  
+
         await signIn("credentials", {
           email,
           password,
@@ -95,25 +93,23 @@ export const AuthProvider = ({ children }) => {
       await signIn("google", { callbackUrl: "/" });
       if (status === "authenticated") {
         const user_id = session?.user?.id;
-        const email = session?.user?.email; 
+        const email = session?.user?.email;
         // localStorage.setItem("user_id", user_id);
-        // localStorage.setItem("email", email); 
-        console.log(email, " email")
+        // localStorage.setItem("email", email);
+        console.log(email, " email");
       }
     } catch (err) {
       console.error("Google login failed", err);
     }
   };
-  
 
   const logout = () => {
     localStorage.removeItem("user_id");
     localStorage.removeItem("email");
-    localStorage.removeItem("token"); 
-    
+    localStorage.removeItem("token");
+
     signOut({ callbackUrl: "/" });
   };
-  
 
   // useEffect(() => {
   //   if (status === "authenticated" && router.pathname !== "/") {
