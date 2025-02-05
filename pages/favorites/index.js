@@ -19,7 +19,7 @@ const FavoritesPage = ({ favorites: initialFavorites }) => {
   const handleDeleteFavorite = async (itemCode) => {
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_API}/fashion/user-favs/${userId}/${itemCode}`,
+        `${process.env.NEXT_PUBLIC_BASE_API}/api/fashion/user-favs/${userId}/${itemCode}`,
         { method: "DELETE" }
       );
 
@@ -37,7 +37,7 @@ const FavoritesPage = ({ favorites: initialFavorites }) => {
   const handleClearAll = async () => {
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_API}/fashion/user-favs/${userId}`,
+        `${process.env.NEXT_PUBLIC_BASE_API}/api/fashion/user-favs/${userId}`,
         { method: "DELETE" }
       );
 
@@ -133,7 +133,7 @@ const FavoritesPage = ({ favorites: initialFavorites }) => {
 export async function getServerSideProps() {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_API}/fashion/user-favs`
+      `${process.env.NEXT_PUBLIC_BASE_API}/api/fashion/user-favs`
     );
     if (!res.ok) {
       throw new Error("Failed to fetch favorites");

@@ -15,13 +15,13 @@ const Clothes = ({ selectedProduct, handleCardClick }) => {
   };
 
   useEffect(() => {
-    const storedEmail = localStorage.getItem('email');
+    const storedEmail = localStorage.getItem("email");
 
-    if(storedEmail!=null){
+    if (storedEmail != null) {
       const fetchProducts = async () => {
         try {
           const response = await axios.get(
-            `${process.env.NEXT_PUBLIC_BASE_API}/fashion/clothes/email/${storedEmail}`
+            `${process.env.NEXT_PUBLIC_BASE_API}/api/fashion/clothes/email/${storedEmail}`
           );
           setProducts(response.data);
         } catch (error) {
@@ -30,7 +30,6 @@ const Clothes = ({ selectedProduct, handleCardClick }) => {
       };
       fetchProducts();
     }
-
   }, []);
 
   const mockLastProduct = {

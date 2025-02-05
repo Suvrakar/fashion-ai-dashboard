@@ -54,16 +54,16 @@ const ClothesModal = ({ open, setOpen, fetchProducts }) => {
     const fetchOptions = async () => {
       try {
         const categoryResponse = await axios.get(
-          `${process.env.NEXT_PUBLIC_BASE_API}/fashion/categories`
+          `${process.env.NEXT_PUBLIC_BASE_API}/api/fashion/categories`
         );
         const styleResponse = await axios.get(
-          `${process.env.NEXT_PUBLIC_BASE_API}/fashion/styles`
+          `${process.env.NEXT_PUBLIC_BASE_API}/api/fashion/styles`
         );
         const seasonResponse = await axios.get(
-          `${process.env.NEXT_PUBLIC_BASE_API}/fashion/seasons`
+          `${process.env.NEXT_PUBLIC_BASE_API}/api/fashion/seasons`
         );
         const colorResponse = await axios.get(
-          `${process.env.NEXT_PUBLIC_BASE_API}/fashion/colors`
+          `${process.env.NEXT_PUBLIC_BASE_API}/api/fashion/colors`
         );
         setCategories(categoryResponse.data);
         setStyles(styleResponse.data);
@@ -109,7 +109,7 @@ const ClothesModal = ({ open, setOpen, fetchProducts }) => {
     }
     const email = localStorage.getItem("email");
 
-    setLoading(true); // Start loading
+    setLoading(true);
 
     const formDataToSubmit = new FormData();
     formDataToSubmit.append("image", image);
@@ -124,7 +124,7 @@ const ClothesModal = ({ open, setOpen, fetchProducts }) => {
 
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_API}/fashion/clothes`,
+        `${process.env.NEXT_PUBLIC_BASE_API}/api/fashion/clothes`,
         formDataToSubmit,
         { headers: { "Content-Type": "multipart/form-data" } }
       );

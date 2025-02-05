@@ -11,7 +11,7 @@ const Categories = () => {
     const fetchCategories = async () => {
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_BASE_API}/fashion/categories`,
+          `${process.env.NEXT_PUBLIC_BASE_API}/api/fashion/categories`,
           {
             cache: "no-store",
           }

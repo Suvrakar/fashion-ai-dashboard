@@ -90,43 +90,45 @@ export const products = [
   },
 ];
 
-export const rightSideProducts = [
-  {
-    id: 1,
-    image: "/d9aed753ae46dd64394ad526519c6b0f.png",
-    price: "100$",
-    type: "T-Shirt",
-    brand: "PAUL SMITH",
-    colour: "Black",
-  },
-  {
-    id: 2,
-    image: "/d99fee6717030557abb3b07e8223cc89.png",
-    price: "100$",
-    type: "Shorts",
-    brand: "PAUL SMITH",
-    colour: "Black",
-  },
-  {
-    id: 3,
-    image: "1a9e20d1b77a400ca18ebf959d45f78a-ghostjpg@3x.png",
-    price: "100$",
-    type: "Dress",
-    brand: "Dolce & Gabbana",
-    colour: "Orange",
-  },
-  {
-    id: 4,
-    image: "/bfbda01a64784a5092ded083c58a4cbb-ghostjpg@3x.png",
-    price: "100$",
-    type: "Dress",
-    brand: "DRIES VAN NOTEN",
-    colour: "Orange",
-  },
-];
+// export const rightSideProducts = [
+//   {
+//     id: 1,
+//     image: "/d9aed753ae46dd64394ad526519c6b0f.png",
+//     price: "100$",
+//     type: "T-Shirt",
+//     brand: "PAUL SMITH",
+//     colour: "Black",
+//   },
+//   {
+//     id: 2,
+//     image: "/d99fee6717030557abb3b07e8223cc89.png",
+//     price: "100$",
+//     type: "Shorts",
+//     brand: "PAUL SMITH",
+//     colour: "Black",
+//   },
+//   {
+//     id: 3,
+//     image: "1a9e20d1b77a400ca18ebf959d45f78a-ghostjpg@3x.png",
+//     price: "100$",
+//     type: "Dress",
+//     brand: "Dolce & Gabbana",
+//     colour: "Orange",
+//   },
+//   {
+//     id: 4,
+//     image: "/bfbda01a64784a5092ded083c58a4cbb-ghostjpg@3x.png",
+//     price: "100$",
+//     type: "Dress",
+//     brand: "DRIES VAN NOTEN",
+//     colour: "Orange",
+//   },
+// ];
 
 const GeneratedPage = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [generatedImageUrl, setGeneratedImageUrl] = useState(null);
+  const [uploadedClothes, setUploadedClothes] = useState([]);
 
   const handleCardClick = (id) => {
     setSelectedProduct(id);
@@ -135,23 +137,53 @@ const GeneratedPage = () => {
   useEffect(() => {
     const fetchGeneratedImage = async () => {
       const generatedCloth = localStorage.getItem("generatedId");
-      const response = await fetch(
-        `https://api.klingai.com/v1/images/kolors-virtual-try-on/${generatedCloth}`,
-        {
-          method: "GET",
-          // mode: "no-cors",
-          headers: {
-            Authorization:
-              "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhMTAwYTM5YTM4MTk0NDA1YTI2N2I5NThiOWZjOTIzYiIsImV4cCI6MTczODI1ODQyOCwibmJmIjoxNzM4MjU2NjIzfQ.cyUzDUGuwYajtsT1D02ZyS_0LTc1zy3zOZcjimIE3Yk",
-            "Content-Type": "application/json",
-          },
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_API}/klingai/images/kolors-virtual-try-on/${generatedCloth}`,
+          {
+            method: "GET",
+          }
+        );
+        const data = await response.json();
+        console.log(data);
+
+        if (data.code === 0 && data.data.task_result.images.length > 0) {
+          setGeneratedImageUrl(data.data.task_result.images[0].url);
         }
-      );
-      const data = await response.json();
-      console.log(data);
+      } catch (error) {
+        console.error("Failed to fetch generated image:", error);
+      }
+    };
+
+    const fetchUploadedClothes = async () => {
+      const email = localStorage.getItem("email");
+      try {
+        // Fetch the history of uploaded cloth IDs
+        const historyResponse = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_API}/klingai/images/history?user_email=${email}`
+        );
+        const historyData = await historyResponse.json();
+
+        // Fetch the cloth details for each cloth ID
+        const clothesData = await Promise.all(
+          historyData.map(async (item) => {
+            const clothResponse = await fetch(
+              `${process.env.NEXT_PUBLIC_BASE_API}/api/fashion/clothes/${item.cloth_id}`
+            );
+            console.log(clothResponse);
+            return clothResponse.json();
+          })
+        );
+
+        console.log(clothesData);
+        setUploadedClothes(clothesData);
+      } catch (error) {
+        console.error("Failed to fetch uploaded clothes:", error);
+      }
     };
 
     fetchGeneratedImage();
+    fetchUploadedClothes();
   }, []);
 
   return (
@@ -161,11 +193,12 @@ const GeneratedPage = () => {
 
         <GeneratedPageContent
           products={products}
-          rightSideProducts={rightSideProducts}
+          rightSideProducts={uploadedClothes}
           handleCardClick={handleCardClick}
           selectedProduct={selectedProduct}
           generationNumber={23}
           page={"generated"}
+          generatedImageUrl={generatedImageUrl}
         />
       </section>
     </div>

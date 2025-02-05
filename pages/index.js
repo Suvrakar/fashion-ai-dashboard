@@ -15,25 +15,6 @@ const Categories = dynamic(() => import("../components/Home/Categories"), {
   loading: () => <p>Loading...</p>,
 });
 
-const selectedProductImage = [
-  {
-    id: 1,
-    image: "/image@3x.png",
-  },
-];
-
-const modalStyle = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: "90%",
-  maxWidth: 800,
-  bgcolor: "background.paper",
-  borderRadius: "20px",
-  p: 4,
-};
-
 const ECommerceProductsSelect = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [products, setProducts] = useState([]);
@@ -50,7 +31,7 @@ const ECommerceProductsSelect = () => {
       if (email) {
         try {
           const response = await axios.get(
-            `${process.env.NEXT_PUBLIC_BASE_API}/fashion/clothes/email/${email}`
+            `${process.env.NEXT_PUBLIC_BASE_API}/api/fashion/clothes/email/${email}`
           );
           setProducts(response.data);
         } catch (error) {
@@ -65,12 +46,9 @@ const ECommerceProductsSelect = () => {
   }, [status, session]);
 
   const handleCardClick = (productId, isLastProduct) => {
-    setSelectedProduct(productId);
-
     const selected = JSON.parse(localStorage.getItem("selectedProduct"));
-    if (selected) {
-      console.log("Selected product URL:", selected.img_url);
-    }
+    setSelectedProduct(productId);
+    localStorage.setItem("selectedProduct", JSON.stringify(selected));
 
     if (isLastProduct) {
       setOpen(true);
@@ -87,6 +65,7 @@ const ECommerceProductsSelect = () => {
           {/* Clothes grid */}
           <Clothes
             selectedProduct={selectedProduct}
+            setSelectedProduct={setSelectedProduct}
             handleCardClick={handleCardClick}
             products={products}
             modelImage={imageUrl}
